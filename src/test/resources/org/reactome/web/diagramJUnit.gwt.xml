@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="diagram">
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='org.reactome.web.diagram' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/diagram/greet" class="org.reactome.web.server.GreetingServiceImpl" />
+
+</module>
