@@ -18,6 +18,8 @@ public class Main implements EntryPoint {
     }
 
     private static native void init() /*-{
-        $wnd.init();
+        if($wnd.onReactomeReady){
+            $wnd.onReactomeReady();
+        }
     }-*/;
 }

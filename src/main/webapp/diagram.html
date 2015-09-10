@@ -58,29 +58,31 @@
         <pre class="prettyprint code" >
     //Creating the Reactome Diagram widget
     //Take into account a proxy needs to be set up in your server side pointing to reactomedev.oicr.on.ca
-    var diagram = Reactome.Diagram.create({
-        "proxyPrefix" : "/reactome",
-        "placeHolder" : "diagramHolder",
-        "width" : 900,
-        "height" : 500
-    });
+    function onReactomeReady(){
+        var diagram = Reactome.Diagram.create({
+            "proxyPrefix" : "/reactome",
+            "placeHolder" : "diagramHolder",
+            "width" : 900,
+            "height" : 500
+        });
 
-    //Initialising it to the "Metabolism of nucleotides" pathway
-    diagram.loadDiagram("R-HSA-15869");
+        //Initialising it to the "Metabolism of nucleotides" pathway
+        diagram.loadDiagram("R-HSA-15869");
 
-    //Adding different listeners
+        //Adding different listeners
 
-    diagram.onDiagramLoaded(function (loaded) {
-        console.info("Loaded ", loaded);
-    });
+        diagram.onDiagramLoaded(function (loaded) {
+            console.info("Loaded ", loaded);
+        });
 
-    diagram.onObjectHovered(function (hovered){
-        console.info("Hovered ", hovered);
-    });
+        diagram.onObjectHovered(function (hovered){
+            console.info("Hovered ", hovered);
+        });
 
-    diagram.onObjectSelected(function (selected){
-        console.info("Selected ", selected);
-    });
+        diagram.onObjectSelected(function (selected){
+            console.info("Selected ", selected);
+        });
+    }
         </pre>
     </div>
 
@@ -279,7 +281,7 @@
 </body>
 
 <script>
-    function init() {
+    function onReactomeReady() {
         diagram = Reactome.Diagram.create({
             "placeHolder": "diagramHolder",
             "width": 900,
