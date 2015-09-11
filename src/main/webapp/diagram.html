@@ -58,7 +58,7 @@
         <pre class="prettyprint code" >
     //Creating the Reactome Diagram widget
     //Take into account a proxy needs to be set up in your server side pointing to reactomedev.oicr.on.ca
-    function onReactomeReady(){
+    function onReactomeDiagramReady(){  //This function is automatically called when the widget code is ready to be used
         var diagram = Reactome.Diagram.create({
             "proxyPrefix" : "/reactome",
             "placeHolder" : "diagramHolder",
@@ -281,7 +281,7 @@
 </body>
 
 <script>
-    function onReactomeReady() {
+    function onReactomeDiagramReady() {
         diagram = Reactome.Diagram.create({
             "placeHolder": "diagramHolder",
             "width": 900,
