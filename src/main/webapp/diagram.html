@@ -73,6 +73,7 @@
 
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
+            diagram.flagItems("TXN");
         });
 
         diagram.onObjectHovered(function (hovered){
@@ -93,7 +94,7 @@
         <table>
             <tr>
                 <td width="250px">Method</td>
-                <td>Params</td>
+                <td width="250px">Params</td>
                 <td>Description</td>
             </tr>
             <tr>
@@ -125,6 +126,18 @@
             </tr>
             <tr>
                 <td>
+                    <b>flagItems(term)</b> :: void
+                </td>
+                <td>
+                    Entity identifier (gene name)<br>
+                    <b>term</b> : string
+                </td>
+                <td>
+                    Flags all entities matching with the "term"
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <b>highlightItem(stId)</b> :: void
                 </td>
                 <td>
@@ -144,6 +157,17 @@
                 </td>
                 <td>
                     Resets the analysis overlay
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>resetFlaggedItems()</b> :: void
+                </td>
+                <td>
+
+                </td>
+                <td>
+                    Resets the flagged items
                 </td>
             </tr>
             <tr>
@@ -215,7 +239,9 @@
                     &nbsp;{<br>
                     &nbsp;&nbsp;&nbsp;'stId' : string,<br>
                     &nbsp;&nbsp;&nbsp;'displayName' : string,<br>
-                    &nbsp;&nbsp;&nbsp;'schemaClass' : string<br>
+                    &nbsp;&nbsp;&nbsp;'schemaClass' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'identifier'  : string (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'geneNames'   : Array&lt;string&gt; (optional)<br>
                     &nbsp;}
                 </td>
                 <td>
@@ -231,7 +257,9 @@
                     &nbsp;{<br>
                     &nbsp;&nbsp;&nbsp;'stId' : string,<br>
                     &nbsp;&nbsp;&nbsp;'displayName' : string,<br>
-                    &nbsp;&nbsp;&nbsp;'schemaClass' : string<br>
+                    &nbsp;&nbsp;&nbsp;'schemaClass' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'identifier'  : string (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'geneNames'   : Array&lt;string&gt; (optional)<br>
                     &nbsp;}
                 </td>
                 <td>
@@ -248,6 +276,17 @@
                 </td>
                 <td>
                     The function is called when a diagram is loaded in the viewer
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>onFlagsReset(function())</b> :: void
+                </td>
+                <td>
+                    The function receives no parameters
+                </td>
+                <td>
+                    The function is called when the flagged items have been reset by the user action
                 </td>
             </tr>
             <tr>
@@ -291,6 +330,7 @@
         diagram.loadDiagram("R-HSA-15869");
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
+            diagram.flagItems("TXN");
         });
         diagram.onObjectHovered(function (hovered) {
             console.info("Hovered ", hovered);

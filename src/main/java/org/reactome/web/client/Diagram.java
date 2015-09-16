@@ -67,6 +67,10 @@ public class Diagram implements Exportable {
         return viewer;
     }
 
+    public void flagItems(String term){
+        diagram.flagItems(term);
+    }
+
     public void highlightItem(String stableIdentifier) {
         diagram.highlightItem(stableIdentifier);
     }
@@ -99,6 +103,24 @@ public class Diagram implements Exportable {
     }
 
 
+    public void onDiagramLoaded(final JsDiagramLoadedHandler handler) {
+        diagram.addDiagramLoadedHandler(new DiagramLoadedHandler() {
+            @Override
+            public void onDiagramLoaded(DiagramLoadedEvent event) {
+                handler.loaded(event.getContext().getContent().getStableId());
+            }
+        });
+    }
+
+    public void onFlagsReset(final JsFlagsResetHandler handler){
+        diagram.addDiagramObjectsFlagResetHandler(new DiagramObjectsFlagResetHandler() {
+            @Override
+            public void onDiagramObjectsFlagReset(DiagramObjectsFlagResetEvent event) {
+                handler.flagsReset();
+            }
+        });
+    }
+
     public void onObjectSelected(final JsGraphObjectSelectedHandler handler) {
         diagram.addDatabaseObjectSelectedHandler(new GraphObjectSelectedHandler() {
             @Override
@@ -108,6 +130,7 @@ public class Diagram implements Exportable {
             }
         });
     }
+
 
     public void onObjectHovered(final JsGraphObjectHoveredHandler handler) {
         diagram.addDatabaseObjectHoveredHandler(new GraphObjectHoveredHandler() {
@@ -119,18 +142,12 @@ public class Diagram implements Exportable {
         });
     }
 
-
-    public void onDiagramLoaded(final JsDiagramLoadedHandler handler) {
-        diagram.addDiagramLoadedHandler(new DiagramLoadedHandler() {
-            @Override
-            public void onDiagramLoaded(DiagramLoadedEvent event) {
-                handler.loaded(event.getContext().getContent().getStableId());
-            }
-        });
-    }
-
     public void resetAnalysis() {
         diagram.resetAnalysis();
+    }
+
+    public void resetFlaggedItems() {
+        diagram.resetFlaggedItems();
     }
 
     public void resetHighlight() {
