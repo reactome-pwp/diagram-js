@@ -13,6 +13,7 @@ import org.reactome.web.diagram.client.DiagramViewer;
 import org.reactome.web.diagram.data.graph.model.GraphObject;
 import org.reactome.web.diagram.events.*;
 import org.reactome.web.diagram.handlers.*;
+import org.reactome.web.pwp.model.client.RESTFulClient;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -40,12 +41,13 @@ public class Diagram implements Exportable {
         return create(placeHolder, "", width, height);
     }
 
-    public static Diagram create(String placeHolder, String prefix, final int width, final int height) {
+    public static Diagram create(String placeHolder, String server, final int width, final int height) {
         final Element element = Document.get().getElementById(placeHolder);
         if(element == null) throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
 
         if(diagram==null){
-            DiagramFactory.SERVER_PREFIX = prefix;
+            RESTFulClient.SERVER = server;
+            DiagramFactory.SERVER = server;
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
