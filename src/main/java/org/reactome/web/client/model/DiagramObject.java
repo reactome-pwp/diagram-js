@@ -2,6 +2,7 @@ package org.reactome.web.client.model;
 
 import com.google.gwt.core.client.JavaScriptObject;
 import org.reactome.web.diagram.data.graph.model.GraphObject;
+import org.reactome.web.diagram.data.graph.model.GraphPhysicalEntity;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -21,6 +22,15 @@ public class DiagramObject extends JavaScriptObject implements Exportable  {
         obj.setStId(graphObject.getStId());
         obj.setDisplayName(graphObject.getDisplayName());
         obj.setSchemaClass(graphObject.getSchemaClass().name());
+        if(graphObject instanceof GraphPhysicalEntity){
+            GraphPhysicalEntity pe = (GraphPhysicalEntity) graphObject;
+            obj.setIdentifier(pe.getIdentifier());
+            if(pe.getGeneNames()!=null){
+                for (String geneName : pe.getGeneNames()) {
+                    obj.addGeneName(geneName);
+                }
+            }
+        }
         return obj;
     }
 
@@ -36,4 +46,14 @@ public class DiagramObject extends JavaScriptObject implements Exportable  {
         this.schemaClass = schemaClass;
     }-*/;
 
+    private native void setIdentifier(String identifier) /*-{
+        this.identifier = identifier;
+    }-*/;
+
+    private native void addGeneName(String geneName) /*-{
+        if(this.geneNames==null){
+            this.geneNames = [];
+        }
+        this.geneNames.push(geneName);
+    }-*/;
 }
