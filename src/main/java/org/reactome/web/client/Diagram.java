@@ -48,6 +48,7 @@ public class Diagram implements Exportable {
         if(diagram==null){
             RESTFulClient.SERVER = server;
             DiagramFactory.SERVER = server;
+            DiagramFactory.ILLUSTRATION_SERVER = "http://reactomedev.oicr.on.ca";
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
