@@ -1,32 +1,27 @@
-body {
-    background-color: azure;
-    padding: 20px;
-}
-
 .diagram {
     border: solid 1px;
     float: left;
-    margin: 0 0 50px 50px;
 }
 
 .example {
     clear: left;
     margin-left: 50px;
-    max-width: 950px;
+    max-width: 920px;
 }
 
 .code {
     background-color: lightgray;
     border-radius: 10px;
     font-size: smaller;
-    padding-top: 10px;
+    padding: 10px 0 10px 0;
     margin-left: 25px;
+    overflow: scroll;
 }
 
 .CustomTable {
     margin: 0;
     padding: 0;
-    width: 1000px;
+    width: 920px;
     box-shadow: 10px 10px 5px #888888;
     border: 1px solid #000000;
 
@@ -50,7 +45,7 @@ body {
 .CustomTable table {
     border-collapse: collapse;
     border-spacing: 0;
-    width: 100%;
+    width: 920px;
     height: 100%;
     margin: 0;
     padding: 0;

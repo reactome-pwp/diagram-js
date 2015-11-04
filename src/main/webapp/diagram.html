@@ -11,7 +11,7 @@
     <script type="text/javascript" language="javascript" src="diagram/diagram.nocache.js"></script>
 </head>
 
-<body>
+<body style="">
     <noscript>
         <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
             Your web browser must have JavaScript enabled
@@ -25,7 +25,7 @@
         <div id="diagramHolder"></div>
     </div>
 
-    <div style="clear: left; max-width: 1000px;">
+    <div style="clear: left; max-width: 650px;">
         <h2>What is it?</h2>
         <p style="text-align: justify">
             The Reactome Pathway Diagram Viewer provides users an intuitive means of viewing and interacting with pathway diagrams.
@@ -62,8 +62,8 @@
         var diagram = Reactome.Diagram.create({
             "proxyPrefix" : "/reactome",
             "placeHolder" : "diagramHolder",
-            "width" : 900,
-            "height" : 500
+            "width" : 650,
+            "height" : 450
         });
 
         //Initialising it to the "Metabolism of nucleotides" pathway
@@ -323,8 +323,8 @@
     function onReactomeDiagramReady() {
         diagram = Reactome.Diagram.create({
             "placeHolder": "diagramHolder",
-            "width": 900,
-            "height": 500
+            "width": 650,
+            "height": 450
         });
 
         diagram.loadDiagram("R-HSA-15869");
