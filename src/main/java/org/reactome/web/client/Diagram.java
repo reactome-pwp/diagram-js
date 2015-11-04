@@ -27,12 +27,14 @@ import org.timepedia.exporter.client.Exportable;
 @Export("Diagram")
 public class Diagram implements Exportable {
 
-    private static DiagramViewer diagram ;
+    private static final String SERVER = "//www.reactome.org";
+    private static DiagramViewer diagram;
+    private static DiagramLoader loader;
 
     private Diagram() {
     }
 
-    public static Diagram create(JavaScriptObject input){
+    public static Diagram create(JavaScriptObject input) {
         JsProperties jsProp = new JsProperties(input);
         return create(jsProp.get("placeHolder"), jsProp.get("proxyPrefix", ""), jsProp.getInt("width", 500), jsProp.getInt("height", 400));
     }
@@ -43,17 +45,18 @@ public class Diagram implements Exportable {
 
     public static Diagram create(String placeHolder, String server, final int width, final int height) {
         final Element element = Document.get().getElementById(placeHolder);
-        if(element == null) throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
+        if (element == null)
+            throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
 
-        if(diagram==null){
+        if (diagram == null) {
             RESTFulClient.SERVER = server;
             DiagramFactory.SERVER = server;
-            DiagramFactory.ILLUSTRATION_SERVER = "http://reactomedev.oicr.on.ca";
+            DiagramFactory.ILLUSTRATION_SERVER = SERVER;
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
+            loader = new DiagramLoader(diagram);
         }
-
 
         HTMLPanel holder = HTMLPanel.wrap(element);
         diagram.asWidget().removeFromParent();
@@ -70,7 +73,7 @@ public class Diagram implements Exportable {
         return viewer;
     }
 
-    public void flagItems(String term){
+    public void flagItems(String term) {
         diagram.flagItems(term);
     }
 
@@ -82,9 +85,8 @@ public class Diagram implements Exportable {
         diagram.highlightItem(dbIdentifier);
     }
 
-
     public void loadDiagram(String stId) {
-        diagram.loadDiagram(stId);
+        loader.load(stId);
     }
 
     public void onAnalysisReset(final JsAnalysisResetHandler handler) {
@@ -107,15 +109,23 @@ public class Diagram implements Exportable {
 
 
     public void onDiagramLoaded(final JsDiagramLoadedHandler handler) {
+        loader.addSubpathwaySelectedHandler(new DiagramLoader.SubpathwaySelectedHandler() {
+            @Override
+            public void onSubPathwaySelected(String identifier) {
+                handler.loaded(identifier);
+            }
+        });
         diagram.addDiagramLoadedHandler(new DiagramLoadedHandler() {
             @Override
             public void onDiagramLoaded(DiagramLoadedEvent event) {
-                handler.loaded(event.getContext().getContent().getStableId());
+                if (loader.getTarget() == null) {
+                    handler.loaded(event.getContext().getContent().getStableId());
+                }
             }
         });
     }
 
-    public void onFlagsReset(final JsFlagsResetHandler handler){
+    public void onFlagsReset(final JsFlagsResetHandler handler) {
         diagram.addDiagramObjectsFlagResetHandler(new DiagramObjectsFlagResetHandler() {
             @Override
             public void onDiagramObjectsFlagReset(DiagramObjectsFlagResetEvent event) {
@@ -162,8 +172,7 @@ public class Diagram implements Exportable {
         diagram.resetSelection();
     }
 
-
-    public void resize(int width, int height){
+    public void resize(int width, int height) {
         diagram.asWidget().setWidth(width + "px");
         diagram.asWidget().setHeight(height + "px");
         diagram.onResize();
