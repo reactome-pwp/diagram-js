@@ -16,6 +16,7 @@ import org.reactome.web.pwp.model.util.Path;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -29,6 +30,9 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
 
     private Set<SubpathwaySelectedHandler> handlers = new HashSet<>();
     private final DiagramViewer diagram;
+
+    private String loadedDiagram;
+    private String selectedPathway;
     private String target;
 
     public DiagramLoader(DiagramViewer diagram) {
@@ -37,7 +41,9 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
     }
 
     public void load(String identifier) {
-        DatabaseObjectFactory.get(identifier, this);
+        if(!Objects.equals(identifier, selectedPathway)) {
+            DatabaseObjectFactory.get(identifier, this);
+        }
     }
 
     public String getTarget() {
@@ -71,7 +77,12 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
             Iterator<Path> it = ancestors.iterator();
             if (it.hasNext()) {
                 Path path = it.next();
-                diagram.loadDiagram(path.getLastPathwayWithDiagram().getIdentifier());
+                String toLoad = path.getLastPathwayWithDiagram().getIdentifier();
+                if (toLoad != null && !toLoad.equals(loadedDiagram)) {
+                    diagram.loadDiagram(toLoad);
+                } else if (target != null && !target.equals(toLoad)) {
+                    onDiagramLoaded();
+                }
                 return;
             }
         }
@@ -85,9 +96,15 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
 
     @Override
     public void onDiagramLoaded(DiagramLoadedEvent event) {
-        String loaded = event.getContext().getContent().getStableId();
-        if (!loaded.equals(target)) {
+        loadedDiagram = event.getContext().getContent().getStableId();
+        selectedPathway = loadedDiagram;
+        onDiagramLoaded();
+    }
+
+    public void onDiagramLoaded() {
+        if (!loadedDiagram.equals(target)) {
             diagram.selectItem(target);
+            selectedPathway = target;
             for (SubpathwaySelectedHandler handler : handlers) {
                 handler.onSubPathwaySelected(target);
             }
