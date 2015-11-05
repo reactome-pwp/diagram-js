@@ -27,7 +27,7 @@ import org.timepedia.exporter.client.Exportable;
 @Export("Diagram")
 public class Diagram implements Exportable {
 
-    private static final String SERVER = "//www.reactome.org";
+    private static final String SERVER = "http://www.reactome.org";
     private static DiagramViewer diagram;
     private static DiagramLoader loader;
 
