@@ -28,7 +28,7 @@ public class JsProperties {
 
     public int getInt(String name, int defaultValue){
         String value = get(name);
-        return value == null ? defaultValue : Integer.valueOf(value);
+        return value == null ? defaultValue : Double.valueOf(value).intValue();
     }
 
     private static native String getImpl(JavaScriptObject p, String name) /*-{
