@@ -28,6 +28,10 @@ import org.timepedia.exporter.client.Exportable;
 public class Diagram implements Exportable {
 
     private static final String SERVER = "http://www.reactome.org";
+
+    private static String holder;
+    private static Diagram viewer;
+
     private static DiagramViewer diagram;
     private static DiagramLoader loader;
 
@@ -58,11 +62,23 @@ public class Diagram implements Exportable {
             loader = new DiagramLoader(diagram);
         }
 
-        HTMLPanel holder = HTMLPanel.wrap(element);
-        diagram.asWidget().removeFromParent();
-        holder.add(diagram);
+        if (viewer != null) { //It was created before
+            if (holder.equals(placeHolder)) {
+                return viewer; //If the place holder is the same, then we return the very same object
+            } else {
+                //When the place holder is different, we will use the same object but removing it from its previous holder
+                HTMLPanel oldHolder = HTMLPanel.wrap(Document.get().getElementById(holder));
+                oldHolder.clear();
+            }
+        }
+        holder = placeHolder;
 
-        final Diagram viewer = new Diagram();
+        HTMLPanel container = HTMLPanel.wrap(element);
+        container.clear();
+        diagram.asWidget().removeFromParent();
+        container.add(diagram);
+
+        viewer = new Diagram();
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
