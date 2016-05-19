@@ -22,14 +22,13 @@ import org.timepedia.exporter.client.Exportable;
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 @ExportPackage("Reactome")
 @Export("Diagram")
 public class Diagram implements Exportable {
 
     private static final String SERVER = "http://www.reactome.org";
 
-    private static String holder;
     private static Diagram viewer;
 
     private static DiagramViewer diagram;
@@ -40,11 +39,11 @@ public class Diagram implements Exportable {
 
     public static Diagram create(JavaScriptObject input) {
         JsProperties jsProp = new JsProperties(input);
-        return create(jsProp.get("placeHolder"), jsProp.get("proxyPrefix", ""), jsProp.getInt("width", 500), jsProp.getInt("height", 400));
+        return create(jsProp.get("placeHolder"), jsProp.get("proxyPrefix", SERVER), jsProp.getInt("width", 500), jsProp.getInt("height", 400));
     }
 
     public static Diagram create(String placeHolder, int width, int height) {
-        return create(placeHolder, "", width, height);
+        return create(placeHolder, SERVER, width, height);
     }
 
     public static Diagram create(String placeHolder, String server, final int width, final int height) {
@@ -52,7 +51,7 @@ public class Diagram implements Exportable {
         if (element == null)
             throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
 
-        if (diagram == null) {
+        if (viewer == null) {
             RESTFulClient.SERVER = server;
             DiagramFactory.SERVER = server;
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
@@ -60,25 +59,14 @@ public class Diagram implements Exportable {
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
             loader = new DiagramLoader(diagram);
+            viewer = new Diagram();
+        } else {
+            viewer.detach();
         }
-
-        if (viewer != null) { //It was created before
-            if (holder.equals(placeHolder)) {
-                return viewer; //If the place holder is the same, then we return the very same object
-            } else {
-                //When the place holder is different, we will use the same object but removing it from its previous holder
-                HTMLPanel oldHolder = HTMLPanel.wrap(Document.get().getElementById(holder));
-                oldHolder.clear();
-            }
-        }
-        holder = placeHolder;
 
         HTMLPanel container = HTMLPanel.wrap(element);
         container.clear();
-        diagram.asWidget().removeFromParent();
         container.add(diagram);
-
-        viewer = new Diagram();
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
@@ -87,6 +75,12 @@ public class Diagram implements Exportable {
         });
 
         return viewer;
+    }
+
+    public void detach() {
+        if(diagram.asWidget().isAttached()) {
+            diagram.asWidget().removeFromParent();
+        }
     }
 
     public void flagItems(String term) {
