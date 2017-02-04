@@ -2,8 +2,8 @@ package org.reactome.web.client;
 
 import com.google.gwt.core.client.Scheduler;
 import org.reactome.web.diagram.client.DiagramViewer;
-import org.reactome.web.diagram.events.DiagramLoadedEvent;
-import org.reactome.web.diagram.handlers.DiagramLoadedHandler;
+import org.reactome.web.diagram.events.ContentLoadedEvent;
+import org.reactome.web.diagram.handlers.ContentLoadedHandler;
 import org.reactome.web.diagram.util.Console;
 import org.reactome.web.pwp.model.classes.DatabaseObject;
 import org.reactome.web.pwp.model.classes.Event;
@@ -22,11 +22,7 @@ import java.util.Set;
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
-public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCreatedHandler, DiagramLoadedHandler {
-
-    public interface SubpathwaySelectedHandler {
-        void onSubPathwaySelected(String identifier);
-    }
+public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCreatedHandler, ContentLoadedHandler {
 
     private Set<SubpathwaySelectedHandler> handlers = new HashSet<>();
     private final DiagramViewer diagram;
@@ -35,22 +31,22 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
     private String selectedPathway;
     private String target;
 
-    public DiagramLoader(DiagramViewer diagram) {
+    DiagramLoader(DiagramViewer diagram) {
         this.diagram = diagram;
         this.diagram.addDiagramLoadedHandler(this);
     }
 
-    public void load(String identifier) {
+    void load(String identifier) {
         if(!Objects.equals(identifier, selectedPathway)) {
             DatabaseObjectFactory.get(identifier, this);
         }
     }
 
-    public String getTarget() {
+    String getTarget() {
         return target;
     }
 
-    public void addSubpathwaySelectedHandler(SubpathwaySelectedHandler handler) {
+    void addSubpathwaySelectedHandler(SubpathwaySelectedHandler handler) {
         handlers.add(handler);
     }
 
@@ -95,25 +91,24 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
     }
 
     @Override
-    public void onDiagramLoaded(DiagramLoadedEvent event) {
+    public void onContentLoaded(ContentLoadedEvent event) {
         loadedDiagram = event.getContext().getContent().getStableId();
         selectedPathway = loadedDiagram;
         onDiagramLoaded();
     }
 
-    public void onDiagramLoaded() {
+    public interface SubpathwaySelectedHandler {
+        void onSubPathwaySelected(String identifier);
+    }
+
+    private void onDiagramLoaded() {
         if (!loadedDiagram.equals(target)) {
             diagram.selectItem(target);
             selectedPathway = target;
             for (SubpathwaySelectedHandler handler : handlers) {
-                handler.onSubPathwaySelected(target);
+                handler.onSubPathwaySelected("" + target);
             }
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute() {
-                    target = null;
-                }
-            });
+            Scheduler.get().scheduleDeferred(() -> target = null);
         } else {
             target = null;
         }

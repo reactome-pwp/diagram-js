@@ -5,14 +5,13 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import org.reactome.web.analysis.client.AnalysisClient;
 import org.reactome.web.client.handlers.*;
 import org.reactome.web.client.model.DiagramObject;
 import org.reactome.web.client.model.JsProperties;
 import org.reactome.web.diagram.client.DiagramFactory;
 import org.reactome.web.diagram.client.DiagramViewer;
 import org.reactome.web.diagram.data.graph.model.GraphObject;
-import org.reactome.web.diagram.events.*;
-import org.reactome.web.diagram.handlers.*;
 import org.reactome.web.pwp.model.client.RESTFulClient;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
@@ -27,19 +26,37 @@ import org.timepedia.exporter.client.Exportable;
 @Export("Diagram")
 public class Diagram implements Exportable {
 
-    private static final String SERVER = "http://www.reactome.org";
+    private static final String SERVER = "http://reactome.org";
 
     private static Diagram viewer;
 
     private static DiagramViewer diagram;
     private static DiagramLoader loader;
 
+    private boolean diagramLoaded = false;
+    private JsDiagramLoadedHandler loadedHandler;
+    String analysisToken, analysisResource;
+
     private Diagram() {
+        diagram.addAnalysisResetHandler(event -> analysisToken = analysisResource = null);
+        diagram.addDiagramLoadedHandler(event -> {
+            if (event.getContext() != null) {
+                diagramLoaded = true;
+                if (analysisToken != null && analysisResource != null) {
+                    diagram.setAnalysisToken(analysisToken, analysisResource);
+                }
+            }
+        });
     }
 
     public static Diagram create(JavaScriptObject input) {
         JsProperties jsProp = new JsProperties(input);
-        return create(jsProp.get("placeHolder"), jsProp.get("proxyPrefix", SERVER), jsProp.getInt("width", 500), jsProp.getInt("height", 400));
+        return create(
+                jsProp.get("placeHolder"),
+                jsProp.get("proxyPrefix", SERVER),
+                jsProp.getInt("width", 500),
+                jsProp.getInt("height", 400)
+        );
     }
 
     public static Diagram create(String placeHolder, int width, int height) {
@@ -53,11 +70,14 @@ public class Diagram implements Exportable {
 
         if (viewer == null) {
             RESTFulClient.SERVER = server;
+            AnalysisClient.SERVER = server;
             DiagramFactory.SERVER = server;
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
+            DiagramFactory.RESPOND_TO_SEARCH_SHORTCUT = false;
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
+
             loader = new DiagramLoader(diagram);
             viewer = new Diagram();
         } else {
@@ -67,12 +87,7 @@ public class Diagram implements Exportable {
         HTMLPanel container = HTMLPanel.wrap(element);
         container.clear();
         container.add(diagram);
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
-                viewer.resize(width, height);
-            }
-        });
+        Scheduler.get().scheduleDeferred(() -> viewer.resize(width, height));
 
         return viewer;
     }
@@ -84,102 +99,72 @@ public class Diagram implements Exportable {
     }
 
     public void flagItems(String term) {
-        diagram.flagItems(term);
+        if (diagramLoaded) diagram.flagItems(term);
     }
 
     public void highlightItem(String stableIdentifier) {
-        diagram.highlightItem(stableIdentifier);
+        if (diagramLoaded) diagram.highlightItem(stableIdentifier);
     }
 
     public void highlightItem(Long dbIdentifier) {
-        diagram.highlightItem(dbIdentifier);
+        if (diagramLoaded) diagram.highlightItem(dbIdentifier);
     }
 
     public void loadDiagram(String stId) {
+        diagramLoaded = false;
         loader.load(stId);
     }
 
     public void onAnalysisReset(final JsAnalysisResetHandler handler) {
-        diagram.addAnalysisResetHandler(new AnalysisResetHandler() {
-            @Override
-            public void onAnalysisReset(AnalysisResetEvent event) {
-                handler.analysisReset();
-            }
-        });
+        diagram.addAnalysisResetHandler(event -> Scheduler.get().scheduleDeferred(handler::analysisReset));
     }
 
     public void onCanvasNotSupported(final JsCanvasNotSupported handler) {
-        diagram.addCanvasNotSupportedEventHandler(new CanvasNotSupportedHandler() {
-            @Override
-            public void onCanvasNotSupported(CanvasNotSupportedEvent event) {
-                handler.canvasNotSupported();
-            }
-        });
+        diagram.addCanvasNotSupportedEventHandler(event -> Scheduler.get().scheduleDeferred(handler::canvasNotSupported));
     }
 
-
     public void onDiagramLoaded(final JsDiagramLoadedHandler handler) {
-        loader.addSubpathwaySelectedHandler(new DiagramLoader.SubpathwaySelectedHandler() {
-            @Override
-            public void onSubPathwaySelected(String identifier) {
-                handler.loaded(identifier);
-            }
-        });
-        diagram.addDiagramLoadedHandler(new DiagramLoadedHandler() {
-            @Override
-            public void onDiagramLoaded(DiagramLoadedEvent event) {
-                if (loader.getTarget() == null) {
-                    handler.loaded(event.getContext().getContent().getStableId());
-                }
+        loader.addSubpathwaySelectedHandler(handler::loaded);
+        diagram.addDiagramLoadedHandler(event -> {
+            if (loader.getTarget() == null) {
+                Scheduler.get().scheduleDeferred(() -> handler.loaded(event.getContext().getContent().getStableId()));
             }
         });
     }
 
     public void onFlagsReset(final JsFlagsResetHandler handler) {
-        diagram.addDiagramObjectsFlagResetHandler(new DiagramObjectsFlagResetHandler() {
-            @Override
-            public void onDiagramObjectsFlagReset(DiagramObjectsFlagResetEvent event) {
-                handler.flagsReset();
-            }
-        });
+        diagram.addDiagramObjectsFlagResetHandler(event -> Scheduler.get().scheduleDeferred(handler::flagsReset));
     }
 
     public void onObjectSelected(final JsGraphObjectSelectedHandler handler) {
-        diagram.addDatabaseObjectSelectedHandler(new GraphObjectSelectedHandler() {
-            @Override
-            public void onGraphObjectSelected(GraphObjectSelectedEvent event) {
-                GraphObject object = event.getGraphObject();
-                handler.selected(object == null ? null : DiagramObject.create(object));
-            }
+        diagram.addDatabaseObjectSelectedHandler(event -> {
+            GraphObject object = event.getGraphObject();
+            Scheduler.get().scheduleDeferred(() -> handler.selected(object == null ? null : DiagramObject.create(object)));
         });
     }
 
-
     public void onObjectHovered(final JsGraphObjectHoveredHandler handler) {
-        diagram.addDatabaseObjectHoveredHandler(new GraphObjectHoveredHandler() {
-            @Override
-            public void onGraphObjectHovered(GraphObjectHoveredEvent event) {
-                GraphObject object = event.getGraphObject();
-                handler.hovered(object == null ? null : DiagramObject.create(object));
-            }
+        diagram.addDatabaseObjectHoveredHandler(event -> {
+            GraphObject object = event.getGraphObject();
+            Scheduler.get().scheduleDeferred(() -> handler.hovered(object == null ? null : DiagramObject.create(object)));
         });
     }
 
     public void resetAnalysis() {
-        diagram.resetAnalysis();
+        analysisToken = analysisResource = null;
+        if (diagramLoaded) diagram.resetAnalysis();
     }
 
     public void resetFlaggedItems() {
-        diagram.resetFlaggedItems();
+        if (diagramLoaded) diagram.resetFlaggedItems();
     }
 
     public void resetHighlight() {
-        diagram.resetHighlight();
+        if (diagramLoaded) diagram.resetHighlight();
     }
 
-
     public void resetSelection() {
-        diagram.resetSelection();
+        if (diagramLoaded) diagram.resetSelection();
     }
 
     public void resize(int width, int height) {
@@ -190,16 +175,18 @@ public class Diagram implements Exportable {
 
 
     public void selectItem(String stableIdentifier) {
-        diagram.selectItem(stableIdentifier);
+        if (diagramLoaded) diagram.selectItem(stableIdentifier);
     }
 
 
     public void selectItem(Long dbIdentifier) {
-        diagram.selectItem(dbIdentifier);
+        if (diagramLoaded) diagram.selectItem(dbIdentifier);
     }
 
-
     public void setAnalysisToken(String token, String resource) {
-        diagram.setAnalysisToken(token, resource);
+        if (diagramLoaded) diagram.setAnalysisToken(token, resource);
+
+        analysisToken = token;
+        analysisResource = resource;
     }
 }
