@@ -332,7 +332,7 @@
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
             diagram.flagItems("TXN");
-            diagram.selectItem("R-HSA-111804");
+            if(loaded == "R-HSA-15869") diagram.selectItem("R-HSA-111804");
         });
         diagram.onObjectHovered(function (hovered) {
             console.info("Hovered ", hovered);
