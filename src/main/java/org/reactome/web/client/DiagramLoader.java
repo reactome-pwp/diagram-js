@@ -105,10 +105,12 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
         if (!loadedDiagram.equals(target)) {
             diagram.selectItem(target);
             selectedPathway = target;
-            for (SubpathwaySelectedHandler handler : handlers) {
-                handler.onSubPathwaySelected("" + target);
-            }
-            Scheduler.get().scheduleDeferred(() -> target = null);
+            Scheduler.get().scheduleDeferred(() -> {
+                for (SubpathwaySelectedHandler handler : handlers) {
+                    handler.onSubPathwaySelected("" + target);
+                }
+                target = null;
+            });
         } else {
             target = null;
         }
