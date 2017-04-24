@@ -8,7 +8,7 @@
     <groupId>org.reactome.web</groupId>
     <artifactId>diagramJs</artifactId>
     <packaging>war</packaging>
-    <version>3.3.2</version>
+    <version>${diagram-gwt}</version>
     <name>GWT Maven Archetype</name>
 
     <description>
@@ -37,6 +37,8 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
+
+        <diagram-gwt>3.3.2</diagram-gwt>
 
         <appModule>org.reactome.web.Diagram</appModule>
         <appName>${appModule}</appName>
@@ -73,7 +75,7 @@
         <dependency>
             <groupId>org.reactome.web</groupId>
             <artifactId>diagram</artifactId>
-            <version>3.3.2</version>
+            <version>${diagram-gwt}</version>
         </dependency>
 
         <dependency>
