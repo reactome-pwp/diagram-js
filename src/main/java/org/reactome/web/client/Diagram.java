@@ -75,6 +75,7 @@ public class Diagram implements Exportable {
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
             DiagramFactory.RESPOND_TO_SEARCH_SHORTCUT = false;
+            DiagramFactory.SCROLL_SENSITIVITY = 500;
             diagram = DiagramFactory.createDiagramViewer();
             diagram.asWidget().getElement().getStyle().setProperty("height", "inherit");
 
