@@ -44,7 +44,7 @@
     <div class="example">
         <h4>1. Include the diagram javascript dependency in you HTML header</h4>
         <pre class="prettyprint code" >
-    &lt;script type="text/javascript" language="javascript" src="http://reactome.org/DiagramJs/diagram/diagram.nocache.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" language="javascript" src="//reactome.org/DiagramJs/diagram/diagram.nocache.js"&gt;&lt;/script&gt;
         </pre>
 
         <h4>2. Add a place holder in the body of your web page</h4>
@@ -52,29 +52,25 @@
     &lt;div id="diagramHolder"&gt;&lt;/div&gt;
         </pre>
 
-        <h4>3. Set a proxy in your server under "/reactome" pointing to "http://reactome.org"</h4>
-
-        <h4>4. Create and initialise the diagram viewer from your javascript code</h4>
+        <h4>3. Create and initialise the diagram viewer from your javascript code</h4>
         <pre class="prettyprint code" >
     //Creating the Reactome Diagram widget
-    //Take into account a proxy needs to be set up in your server side pointing to reactome.org
     function onReactomeDiagramReady(){  //This function is automatically called when the widget code is ready to be used
         var diagram = Reactome.Diagram.create({
-            "proxyPrefix" : "/reactome",
             "placeHolder" : "diagramHolder",
             "width" : 650,
             "height" : 450
         });
 
-        //Initialising it to the "Metabolism of nucleotides" pathway
-        diagram.loadDiagram("R-HSA-15869");
+        //Initialising it to the "Hemostasis" pathway
+        diagram.loadDiagram("R-HSA-109582");
 
         //Adding different listeners
 
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
-            diagram.flagItems("TXN");
-            diagram.selectItem("R-HSA-111804");
+            diagram.flagItems("FYN");
+            diagram.selectItem("R-HSA-75892");
         });
 
         diagram.onObjectHovered(function (hovered){
@@ -328,11 +324,11 @@
             "height": 450
         });
 
-        diagram.loadDiagram("R-HSA-15869");
+        diagram.loadDiagram("R-HSA-109582");
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
-            diagram.flagItems("TXN");
-            if(loaded == "R-HSA-15869") diagram.selectItem("R-HSA-111804");
+            diagram.flagItems("FYN");
+            if(loaded == "R-HSA-109582") diagram.selectItem("R-HSA-75892");
         });
         diagram.onObjectHovered(function (hovered) {
             console.info("Hovered ", hovered);
