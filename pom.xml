@@ -38,7 +38,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
-        <diagram-gwt>3.3.3</diagram-gwt>
+        <diagram-gwt>3.4.2</diagram-gwt>
 
         <appModule>org.reactome.web.Diagram</appModule>
         <appName>${appModule}</appName>

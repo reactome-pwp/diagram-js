@@ -5,14 +5,13 @@ import org.reactome.web.diagram.client.DiagramViewer;
 import org.reactome.web.diagram.events.ContentLoadedEvent;
 import org.reactome.web.diagram.handlers.ContentLoadedHandler;
 import org.reactome.web.diagram.util.Console;
-import org.reactome.web.pwp.model.classes.DatabaseObject;
-import org.reactome.web.pwp.model.classes.Event;
-import org.reactome.web.pwp.model.client.RESTFulClient;
-import org.reactome.web.pwp.model.client.handlers.AncestorsCreatedHandler;
-import org.reactome.web.pwp.model.factory.DatabaseObjectFactory;
-import org.reactome.web.pwp.model.handlers.DatabaseObjectCreatedHandler;
-import org.reactome.web.pwp.model.util.Ancestors;
-import org.reactome.web.pwp.model.util.Path;
+import org.reactome.web.pwp.model.client.classes.DatabaseObject;
+import org.reactome.web.pwp.model.client.classes.Event;
+import org.reactome.web.pwp.model.client.common.ContentClientHandler;
+import org.reactome.web.pwp.model.client.content.ContentClient;
+import org.reactome.web.pwp.model.client.content.ContentClientError;
+import org.reactome.web.pwp.model.client.util.Ancestors;
+import org.reactome.web.pwp.model.client.util.Path;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,7 +21,7 @@ import java.util.Set;
 /**
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
-public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCreatedHandler, ContentLoadedHandler {
+public class DiagramLoader implements ContentClientHandler.ObjectLoaded<DatabaseObject>, ContentClientHandler.AncestorsLoaded, ContentLoadedHandler {
 
     private Set<SubpathwaySelectedHandler> handlers = new HashSet<>();
     private final DiagramViewer diagram;
@@ -38,7 +37,7 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
 
     void load(String identifier) {
         if(!Objects.equals(identifier, selectedPathway)) {
-            DatabaseObjectFactory.get(identifier, this);
+            ContentClient.query(identifier, this);
         }
     }
 
@@ -51,20 +50,22 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
     }
 
     @Override
-    public void onDatabaseObjectLoaded(DatabaseObject databaseObject) {
+    public void onContentLoaded(ContentLoadedEvent event) {
+        loadedDiagram = event.getContext().getContent().getStableId();
+        selectedPathway = loadedDiagram;
+        onDiagramLoaded();
+    }
+
+    @Override
+    public void onObjectLoaded(DatabaseObject databaseObject) {
         if (databaseObject instanceof Event) {
-            target = databaseObject.getIdentifier();
+            target = databaseObject.getReactomeIdentifier();
             Event event = (Event) databaseObject;
-            RESTFulClient.getAncestors(event, this);
+            ContentClient.getAncestors(event, this);
             return;
         }
         target = null;
         Console.error("The provided identifier is not an 'Event' in Reactome");
-    }
-
-    @Override
-    public void onDatabaseObjectError(Throwable exception) {
-        Console.error(exception.getMessage());
     }
 
     @Override
@@ -73,7 +74,7 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
             Iterator<Path> it = ancestors.iterator();
             if (it.hasNext()) {
                 Path path = it.next();
-                String toLoad = path.getLastPathwayWithDiagram().getIdentifier();
+                String toLoad = path.getLastPathwayWithDiagram().getReactomeIdentifier();
                 if (toLoad != null && !toLoad.equals(loadedDiagram)) {
                     diagram.loadDiagram(toLoad);
                 } else if (target != null && !target.equals(toLoad)) {
@@ -86,15 +87,13 @@ public class DiagramLoader implements DatabaseObjectCreatedHandler, AncestorsCre
     }
 
     @Override
-    public void onAncestorsError(Throwable exception) {
-        Console.error(exception.getMessage());
+    public void onContentClientException(Type type, String message) {
+        Console.error(message);
     }
 
     @Override
-    public void onContentLoaded(ContentLoadedEvent event) {
-        loadedDiagram = event.getContext().getContent().getStableId();
-        selectedPathway = loadedDiagram;
-        onDiagramLoaded();
+    public void onContentClientError(ContentClientError error) {
+        Console.error(error.getMessage());
     }
 
     public interface SubpathwaySelectedHandler {

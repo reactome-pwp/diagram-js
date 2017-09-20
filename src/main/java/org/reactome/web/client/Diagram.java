@@ -12,7 +12,7 @@ import org.reactome.web.client.model.JsProperties;
 import org.reactome.web.diagram.client.DiagramFactory;
 import org.reactome.web.diagram.client.DiagramViewer;
 import org.reactome.web.diagram.data.graph.model.GraphObject;
-import org.reactome.web.pwp.model.client.RESTFulClient;
+import org.reactome.web.pwp.model.client.content.ContentClient;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
@@ -69,7 +69,7 @@ public class Diagram implements Exportable {
             throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
 
         if (viewer == null) {
-            RESTFulClient.SERVER = server;
+            ContentClient.SERVER = server;
             AnalysisClient.SERVER = server;
             DiagramFactory.SERVER = server;
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
