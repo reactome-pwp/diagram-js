@@ -31,14 +31,14 @@
 
     <properties>
         <!-- Convenience property to set the GWT version -->
-        <gwtVersion>2.8.1</gwtVersion>
+        <gwtVersion>2.8.2</gwtVersion>
         <gwtStyle>OBF</gwtStyle> <!-- OBF | PRETTY | DETAILED -->
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
-        <diagram-gwt>3.4.4</diagram-gwt>
+        <diagram-gwt>3.6.0</diagram-gwt>
 
         <appModule>org.reactome.web.Diagram</appModule>
         <appName>${appModule}</appName>
