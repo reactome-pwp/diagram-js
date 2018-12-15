@@ -99,8 +99,13 @@ public class Diagram implements Exportable {
         }
     }
 
+    @Deprecated
     public void flagItems(String term) {
-        if (diagramLoaded) diagram.flagItems(term);
+        if (diagramLoaded) diagram.flagItems(term, false);
+    }
+
+    public void flagItems(String term, Boolean includeInteractors) {
+        if (diagramLoaded) diagram.flagItems(term, includeInteractors);
     }
 
     public void highlightItem(String stableIdentifier) {
