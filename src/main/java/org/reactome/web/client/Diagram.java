@@ -104,7 +104,7 @@ public class Diagram implements Exportable {
         if (diagramLoaded) diagram.flagItems(term, false);
     }
 
-    public void flagItems(String term, Boolean includeInteractors) {
+    public void flagItems(String term, boolean includeInteractors) {
         if (diagramLoaded) diagram.flagItems(term, includeInteractors);
     }
 
@@ -112,7 +112,7 @@ public class Diagram implements Exportable {
         if (diagramLoaded) diagram.highlightItem(stableIdentifier);
     }
 
-    public void highlightItem(Long dbIdentifier) {
+    public void highlightItem(long dbIdentifier) {
         if (diagramLoaded) diagram.highlightItem(dbIdentifier);
     }
 
@@ -185,7 +185,7 @@ public class Diagram implements Exportable {
     }
 
 
-    public void selectItem(Long dbIdentifier) {
+    public void selectItem(long dbIdentifier) {
         if (diagramLoaded) diagram.selectItem(dbIdentifier);
     }
 
@@ -195,4 +195,10 @@ public class Diagram implements Exportable {
         analysisToken = token;
         analysisResource = resource;
     }
+
+    private static native void _error(String message)/*-{
+        if($wnd.console){
+            $wnd.console.error(message);
+        }
+    }-*/;
 }
