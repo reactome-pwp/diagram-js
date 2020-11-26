@@ -6,10 +6,10 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.reactome.web</groupId>
-    <artifactId>diagramJs</artifactId>
+    <artifactId>diagram-js</artifactId>
     <packaging>war</packaging>
-    <version>${diagram-gwt}</version>
-    <name>GWT Maven Archetype</name>
+    <version>3.7.0-SNAPSHOT</version>
+    <name>Reactome Diagram Viewer JS</name>
 
     <description>
         Javascript exporter for the visualiser of Reactome diagrams, illustrations and enhanced high level diagrams (EHLD)
@@ -33,12 +33,13 @@
         <!-- Convenience property to set the GWT version -->
         <gwtVersion>2.8.2</gwtVersion>
         <gwtStyle>OBF</gwtStyle> <!-- OBF | PRETTY | DETAILED -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
-        <diagram-gwt>3.6.4</diagram-gwt>
+        <diagram.gwt>3.7.0-SNAPSHOT</diagram.gwt>
 
         <appModule>org.reactome.web.Diagram</appModule>
         <appName>${appModule}</appName>
@@ -75,7 +76,7 @@
         <dependency>
             <groupId>org.reactome.web</groupId>
             <artifactId>diagram</artifactId>
-            <version>${diagram-gwt}</version>
+            <version>${diagram.gwt}</version>
         </dependency>
 
         <dependency>
@@ -143,7 +144,7 @@
         <repository>
             <id>nexus-ebi-repo</id>
             <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -155,7 +156,7 @@
         <repository>
             <id>nexus-ebi-snapshot-repo</id>
             <name>The EBI internal snapshot repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>

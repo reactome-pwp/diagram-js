@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import org.reactome.web.analysis.client.AnalysisClient;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.client.handlers.*;
 import org.reactome.web.client.model.DiagramObject;
 import org.reactome.web.client.model.JsProperties;
@@ -43,7 +44,9 @@ public class Diagram implements Exportable {
             if (event.getContext() != null) {
                 diagramLoaded = true;
                 if (analysisToken != null && analysisResource != null) {
-                    diagram.setAnalysisToken(analysisToken, analysisResource);
+                    ResultFilter rf = new ResultFilter();
+                    rf.setResource(analysisResource);
+                    diagram.setAnalysisToken(analysisToken, rf);
                 }
             }
         });
@@ -190,7 +193,11 @@ public class Diagram implements Exportable {
     }
 
     public void setAnalysisToken(String token, String resource) {
-        if (diagramLoaded) diagram.setAnalysisToken(token, resource);
+        if (diagramLoaded) {
+            ResultFilter rf = new ResultFilter();
+            rf.setResource(resource);
+            diagram.setAnalysisToken(token, rf);
+        }
 
         analysisToken = token;
         analysisResource = resource;
