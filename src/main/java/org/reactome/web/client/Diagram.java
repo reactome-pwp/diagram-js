@@ -6,6 +6,7 @@ import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import org.reactome.web.analysis.client.AnalysisClient;
+import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.client.handlers.*;
 import org.reactome.web.client.model.DiagramObject;
 import org.reactome.web.client.model.JsProperties;
@@ -35,15 +36,19 @@ public class Diagram implements Exportable {
 
     private boolean diagramLoaded = false;
     private JsDiagramLoadedHandler loadedHandler;
-    String analysisToken, analysisResource;
+    String analysisToken;
+    ResultFilter analysisResultFilter;
 
     private Diagram() {
-        diagram.addAnalysisResetHandler(event -> analysisToken = analysisResource = null);
+        diagram.addAnalysisResetHandler(event -> {
+            analysisToken = null;
+            analysisResultFilter = null;
+        });
         diagram.addDiagramLoadedHandler(event -> {
             if (event.getContext() != null) {
                 diagramLoaded = true;
-                if (analysisToken != null && analysisResource != null) {
-                    diagram.setAnalysisToken(analysisToken, analysisResource);
+                if (analysisToken != null && analysisResultFilter != null) {
+                    diagram.setAnalysisToken(analysisToken, analysisResultFilter);
                 }
             }
         });
@@ -94,7 +99,7 @@ public class Diagram implements Exportable {
     }
 
     public void detach() {
-        if(diagram.asWidget().isAttached()) {
+        if (diagram.asWidget().isAttached()) {
             diagram.asWidget().removeFromParent();
         }
     }
@@ -157,7 +162,8 @@ public class Diagram implements Exportable {
     }
 
     public void resetAnalysis() {
-        analysisToken = analysisResource = null;
+        analysisToken = null;
+        analysisResultFilter = null;
         if (diagramLoaded) diagram.resetAnalysis();
     }
 
@@ -189,15 +195,25 @@ public class Diagram implements Exportable {
         if (diagramLoaded) diagram.selectItem(dbIdentifier);
     }
 
-    public void setAnalysisToken(String token, String resource) {
-        if (diagramLoaded) diagram.setAnalysisToken(token, resource);
+    public void setAnalysisToken(String token, JavaScriptObject filter) {
+        JsProperties filterProp = new JsProperties(filter);
+        ResultFilter resultFilter = new ResultFilter(
+                filterProp.get("resource"),
+                Double.valueOf(filterProp.get("pValue", "1")),
+                Boolean.parseBoolean(filterProp.get("includeDisease", "true")),
+                filterProp.getInt("min"),
+                filterProp.getInt("max"),
+                filterProp.getArray("speciesList")
+                );
+
+        if (diagramLoaded) diagram.setAnalysisToken(token, resultFilter);
 
         analysisToken = token;
-        analysisResource = resource;
+        analysisResultFilter = resultFilter;
     }
 
     private static native void _error(String message)/*-{
-        if($wnd.console){
+        if ($wnd.console) {
             $wnd.console.error(message);
         }
     }-*/;

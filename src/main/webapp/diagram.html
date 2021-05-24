@@ -215,16 +215,24 @@
             </tr>
             <tr>
                 <td>
-                    <b>setAnalysisToken(token, resource)</b> :: void
+                    <b>setAnalysisToken(token, filter)</b> :: void
                 </td>
                 <td>
                     Analysis token<br>
                     <b>token</b> : string<br>
-                    Resource<br>
-                    <b>resource</b> : string
+                    Analysis results filter<br>
+                    <b>filter</b> :: json object<br>
+                    &nbsp;{<br>
+                    &nbsp;&nbsp;&nbsp;'<b>resource</b>' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'pValue' : number (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'includeDisease' : boolean (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'min' : int (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'max' : int (optional)<br>
+                    &nbsp;&nbsp;&nbsp;'speciesList' : Array&ltstring&gt (optional)<br>
+                    &nbsp;}
                 </td>
                 <td>
-                    Overlays the analysis result corresponding to the specified (token, resource)
+                    Overlays the analysis result corresponding to the specified (token, filter)
                 </td>
             </tr>
             <tr>
