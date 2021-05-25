@@ -77,6 +77,7 @@ public class Diagram implements Exportable {
             ContentClient.SERVER = server;
             AnalysisClient.SERVER = server;
             DiagramFactory.SERVER = server;
+            DiagramFactory.WIDGET_JS = true; // DO NOT CHANGE TO FALSE.
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
             DiagramFactory.SHOW_FIREWORKS_BTN = false;
             DiagramFactory.RESPOND_TO_SEARCH_SHORTCUT = false;
