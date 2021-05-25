@@ -338,6 +338,14 @@
             "height": 450
         });
 
+        // If you want to test analysis, fetch a token from reactome.org and use them here
+        // diagram.setAnalysisToken("MjAyMTA1MjUwODUzNThfNjUwMDU%253D", {
+        //     resource: "TOTAL",
+        //     speciesList: [
+        //         "Homo sapiens"
+        //     ]
+        // });
+
         diagram.loadDiagram("R-HSA-109582");
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
