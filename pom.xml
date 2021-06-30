@@ -58,8 +58,8 @@
         <webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 
         <!-- maven build and plugins -->
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <maven.gpg.version>1.5</maven.gpg.version>
         <maven.gwt.version>1.0-rc-6</maven.gwt.version>
         <maven.javadoc.version>2.10.3</maven.javadoc.version>
