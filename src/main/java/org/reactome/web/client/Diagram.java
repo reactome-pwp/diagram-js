@@ -36,17 +36,19 @@ public class Diagram implements Exportable {
 
     private boolean diagramLoaded = false;
     private JsDiagramLoadedHandler loadedHandler;
-    String analysisToken, analysisResource;
+    String analysisToken;
+    ResultFilter analysisResultFilter;
 
     private Diagram() {
-        diagram.addAnalysisResetHandler(event -> analysisToken = analysisResource = null);
+        diagram.addAnalysisResetHandler(event -> {
+            analysisToken = null;
+            analysisResultFilter = null;
+        });
         diagram.addDiagramLoadedHandler(event -> {
             if (event.getContext() != null) {
                 diagramLoaded = true;
-                if (analysisToken != null && analysisResource != null) {
-                    ResultFilter rf = new ResultFilter();
-                    rf.setResource(analysisResource);
-                    diagram.setAnalysisToken(analysisToken, rf);
+                if (analysisToken != null && analysisResultFilter != null) {
+                    diagram.setAnalysisToken(analysisToken, analysisResultFilter);
                 }
             }
         });
@@ -98,7 +100,7 @@ public class Diagram implements Exportable {
     }
 
     public void detach() {
-        if(diagram.asWidget().isAttached()) {
+        if (diagram.asWidget().isAttached()) {
             diagram.asWidget().removeFromParent();
         }
     }
@@ -161,7 +163,8 @@ public class Diagram implements Exportable {
     }
 
     public void resetAnalysis() {
-        analysisToken = analysisResource = null;
+        analysisToken = null;
+        analysisResultFilter = null;
         if (diagramLoaded) diagram.resetAnalysis();
     }
 
@@ -193,19 +196,25 @@ public class Diagram implements Exportable {
         if (diagramLoaded) diagram.selectItem(dbIdentifier);
     }
 
-    public void setAnalysisToken(String token, String resource) {
-        if (diagramLoaded) {
-            ResultFilter rf = new ResultFilter();
-            rf.setResource(resource);
-            diagram.setAnalysisToken(token, rf);
-        }
+    public void setAnalysisToken(String token, JavaScriptObject filter) {
+        JsProperties filterProp = new JsProperties(filter);
+        ResultFilter resultFilter = new ResultFilter(
+                filterProp.get("resource"),
+                Double.valueOf(filterProp.get("pValue", "1")),
+                Boolean.parseBoolean(filterProp.get("includeDisease", "true")),
+                filterProp.getInt("min"),
+                filterProp.getInt("max"),
+                filterProp.getArray("speciesList")
+                );
+
+        if (diagramLoaded) diagram.setAnalysisToken(token, resultFilter);
 
         analysisToken = token;
-        analysisResource = resource;
+        analysisResultFilter = resultFilter;
     }
 
     private static native void _error(String message)/*-{
-        if($wnd.console){
+        if ($wnd.console) {
             $wnd.console.error(message);
         }
     }-*/;

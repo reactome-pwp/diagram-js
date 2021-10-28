@@ -12,20 +12,20 @@ import org.timepedia.exporter.client.Exportable;
  */
 @Export()
 @ExportPackage("Reactome")
-public class DiagramObject extends JavaScriptObject implements Exportable  {
+public class DiagramObject extends JavaScriptObject implements Exportable {
 
     protected DiagramObject() {
     }
 
-    public static DiagramObject create(GraphObject graphObject){
+    public static DiagramObject create(GraphObject graphObject) {
         DiagramObject obj = (DiagramObject) JavaScriptObject.createObject();
         obj.setStId(graphObject.getStId());
         obj.setDisplayName(graphObject.getDisplayName());
         obj.setSchemaClass(graphObject.getSchemaClass().name());
-        if(graphObject instanceof GraphPhysicalEntity){
+        if (graphObject instanceof GraphPhysicalEntity) {
             GraphPhysicalEntity pe = (GraphPhysicalEntity) graphObject;
             obj.setIdentifier(pe.getIdentifier());
-            if(pe.getGeneNames()!=null){
+            if (pe.getGeneNames() != null) {
                 for (String geneName : pe.getGeneNames()) {
                     obj.addGeneName(geneName);
                 }
@@ -51,7 +51,7 @@ public class DiagramObject extends JavaScriptObject implements Exportable  {
     }-*/;
 
     private native void addGeneName(String geneName) /*-{
-        if(this.geneNames==null){
+        if (this.geneNames == null) {
             this.geneNames = [];
         }
         this.geneNames.push(geneName);

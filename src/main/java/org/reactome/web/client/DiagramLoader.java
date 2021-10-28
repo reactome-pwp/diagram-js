@@ -36,7 +36,7 @@ public class DiagramLoader implements ContentClientHandler.ObjectLoaded<Database
     }
 
     void load(String identifier) {
-        if(!Objects.equals(identifier, selectedPathway)) {
+        if (!Objects.equals(identifier, selectedPathway)) {
             ContentClient.query(identifier, this);
         }
     }

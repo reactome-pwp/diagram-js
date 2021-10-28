@@ -12,48 +12,53 @@
 </head>
 
 <body style="">
-    <noscript>
-        <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
-            Your web browser must have JavaScript enabled
-            in order for this application to display correctly.
-        </div>
-    </noscript>
-
-    <h1>Reusing Reactome's Diagram Widget?</h1>
-
-    <div class="diagram">
-        <div id="diagramHolder"></div>
+<noscript>
+    <div style="width: 22em; position: absolute; left: 50%; margin-left: -11em; color: red; background-color: white; border: 1px solid red; padding: 4px; font-family: sans-serif">
+        Your web browser must have JavaScript enabled
+        in order for this application to display correctly.
     </div>
+</noscript>
 
-    <div style="clear: left; max-width: 650px;">
-        <h2>What is it?</h2>
-        <p style="text-align: justify">
-            The Reactome Pathway Diagram Viewer provides users an intuitive means of viewing and interacting with pathway diagrams.
-            Pathway diagrams represent the steps of a pathway as a series of interconnected molecular events, known in Reactome as 'reactions'.
-            Reactions are the core unit of Reactome's data model. They encapsulate 'changes of state' in biology, such as the familiar
-            biochemical reaction where substrates are converted into products by the action of a catalyst, but also include processes such as
-            transport of molecules from one cellular compartment to another, binding, dissociation, phosphorylation, degradation and more.
-        </p>
-    </div>
+<h1>Reusing Reactome's Diagram Widget?</h1>
 
-    <div style="clear: left">
-        <h2>How to use it?</h2>
-        <p>To reuse our viewer you need to follow the following steps</p>
-    </div>
+<div class="diagram">
+    <div id="diagramHolder"></div>
+</div>
 
-    <div class="example">
-        <h4>1. Include the diagram javascript dependency in you HTML header</h4>
-        <pre class="prettyprint code" >
+<div style="clear: left; max-width: 650px;">
+    <h2>What is it?</h2>
+    <p style="text-align: justify">
+        The Reactome Pathway Diagram Viewer provides users an intuitive means of viewing and interacting with pathway
+        diagrams.
+        Pathway diagrams represent the steps of a pathway as a series of interconnected molecular events, known in
+        Reactome as 'reactions'.
+        Reactions are the core unit of Reactome's data model. They encapsulate 'changes of state' in biology, such as
+        the familiar
+        biochemical reaction where substrates are converted into products by the action of a catalyst, but also include
+        processes such as
+        transport of molecules from one cellular compartment to another, binding, dissociation, phosphorylation,
+        degradation and more.
+    </p>
+</div>
+
+<div style="clear: left">
+    <h2>How to use it?</h2>
+    <p>To reuse our viewer you need to follow the following steps</p>
+</div>
+
+<div class="example">
+    <h4>1. Include the diagram javascript dependency in you HTML header</h4>
+    <pre class="prettyprint code">
     &lt;script type="text/javascript" language="javascript" src="//reactome.org/DiagramJs/diagram/diagram.nocache.js"&gt;&lt;/script&gt;
         </pre>
 
-        <h4>2. Add a place holder in the body of your web page</h4>
-        <pre class="prettyprint code" >
+    <h4>2. Add a place holder in the body of your web page</h4>
+    <pre class="prettyprint code">
     &lt;div id="diagramHolder"&gt;&lt;/div&gt;
         </pre>
 
-        <h4>3. Create and initialise the diagram viewer from your javascript code</h4>
-        <pre class="prettyprint code" >
+    <h4>3. Create and initialise the diagram viewer from your javascript code</h4>
+    <pre class="prettyprint code">
     //Creating the Reactome Diagram widget
     function onReactomeDiagramReady(){  //This function is automatically called when the widget code is ready to be used
         var diagram = Reactome.Diagram.create({
@@ -73,21 +78,21 @@
             diagram.selectItem("R-HSA-75892");
         });
 
-        diagram.onObjectHovered(function (hovered){
+        diagram.onObjectHovered(function (hovered) {
             console.info("Hovered ", hovered);
         });
 
-        diagram.onObjectSelected(function (selected){
+        diagram.onObjectSelected(function (selected) {
             console.info("Selected ", selected);
         });
     }
         </pre>
-    </div>
+</div>
 
-    <div style="clear: left">
-        <h2>Current available options for listeners and methods:</h2>
+<div style="clear: left">
+    <h2>Current available options for listeners and methods:</h2>
 
-        <div class="CustomTable">
+    <div class="CustomTable">
         <table>
             <tr>
                 <td width="250px">Method</td>
@@ -215,16 +220,24 @@
             </tr>
             <tr>
                 <td>
-                    <b>setAnalysisToken(token, resource)</b> :: void
+                    <b>setAnalysisToken(token, filter)</b> :: void
                 </td>
                 <td>
                     Analysis token<br>
                     <b>token</b> : string<br>
-                    Resource<br>
-                    <b>resource</b> : string
+                    Analysis results filter<br>
+                    <b>filter</b> :: json object<br>
+                    &nbsp;{<br>
+                    &nbsp;&nbsp;&nbsp;'<b>resource</b>' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'pValue' : number (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'includeDisease' : boolean (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'min' : int (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'max' : int (optional)<br>
+                    &nbsp;&nbsp;&nbsp;'speciesList' : Array&ltstring&gt (optional)<br>
+                    &nbsp;}
                 </td>
                 <td>
-                    Overlays the analysis result corresponding to the specified (token, resource)
+                    Overlays the analysis result corresponding to the specified (token, filter)
                 </td>
             </tr>
             <tr>
@@ -237,8 +250,8 @@
                     &nbsp;&nbsp;&nbsp;'stId' : string,<br>
                     &nbsp;&nbsp;&nbsp;'displayName' : string,<br>
                     &nbsp;&nbsp;&nbsp;'schemaClass' : string,<br>
-                    &nbsp;&nbsp;&nbsp;'identifier'  : string (optional),<br>
-                    &nbsp;&nbsp;&nbsp;'geneNames'   : Array&lt;string&gt; (optional)<br>
+                    &nbsp;&nbsp;&nbsp;'identifier' : string (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'geneNames' : Array&lt;string&gt; (optional)<br>
                     &nbsp;}
                 </td>
                 <td>
@@ -255,8 +268,8 @@
                     &nbsp;&nbsp;&nbsp;'stId' : string,<br>
                     &nbsp;&nbsp;&nbsp;'displayName' : string,<br>
                     &nbsp;&nbsp;&nbsp;'schemaClass' : string,<br>
-                    &nbsp;&nbsp;&nbsp;'identifier'  : string (optional),<br>
-                    &nbsp;&nbsp;&nbsp;'geneNames'   : Array&lt;string&gt; (optional)<br>
+                    &nbsp;&nbsp;&nbsp;'identifier' : string (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'geneNames' : Array&lt;string&gt; (optional)<br>
                     &nbsp;}
                 </td>
                 <td>
@@ -306,13 +319,14 @@
                     The function receives no parameters.
                 </td>
                 <td>
-                    The function is called when the browser doesn't support HTML5 Canvas so the viewer cannot be instantiated<br><br>
+                    The function is called when the browser doesn't support HTML5 Canvas so the viewer cannot be
+                    instantiated<br><br>
                     diagram.onCanvasNotSupported(function(){ /* your code here */ });
                 </td>
             </tr>
         </table>
-        </div>
     </div>
+</div>
 
 </body>
 
@@ -324,11 +338,19 @@
             "height": 450
         });
 
+        // If you want to test analysis, fetch a token from reactome.org and use them here
+        // diagram.setAnalysisToken("MjAyMTA1MjUwODUzNThfNjUwMDU%253D", {
+        //     resource: "TOTAL",
+        //     speciesList: [
+        //         "Homo sapiens"
+        //     ]
+        // });
+
         diagram.loadDiagram("R-HSA-109582");
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
             diagram.flagItems("FYN");
-            if(loaded == "R-HSA-109582") diagram.selectItem("R-HSA-75892");
+            if (loaded === "R-HSA-109582") diagram.selectItem("R-HSA-75892");
         });
         diagram.onObjectHovered(function (hovered) {
             console.info("Hovered ", hovered);
