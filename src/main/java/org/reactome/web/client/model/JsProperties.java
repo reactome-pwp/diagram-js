@@ -35,6 +35,14 @@ public class JsProperties {
         return value == null ? defaultValue : Double.valueOf(value).intValue();
     }
 
+    public boolean getBoolean(String name) {
+        return Boolean.parseBoolean(get(name));
+    }
+    public boolean getBoolean(String name, boolean defaultValue) {
+        String value = get(name);
+        return value == null ? defaultValue : Boolean.parseBoolean(value);
+    }
+
     public List<String> getArray(String name) {
         JsArrayString arrayImpl = getArrayImpl(prop, name);
         List<String> result = new ArrayList<>();

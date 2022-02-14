@@ -127,6 +127,10 @@ public class Diagram implements Exportable {
         loader.load(stId);
     }
 
+    public void onSearchPerformed(final JsSearchPerformedHandler handler) {
+        diagram.addSearchPerformedHandler(event -> Scheduler.get().scheduleDeferred(() -> handler.onSearchPerformed(JsSearchArguments.create(event.getSearchArguments()))));
+    }
+
     public void onAnalysisReset(final JsAnalysisResetHandler handler) {
         diagram.addAnalysisResetHandler(event -> Scheduler.get().scheduleDeferred(handler::analysisReset));
     }
@@ -205,7 +209,7 @@ public class Diagram implements Exportable {
                 filterProp.getInt("min"),
                 filterProp.getInt("max"),
                 filterProp.getArray("speciesList")
-                );
+        );
 
         if (diagramLoaded) diagram.setAnalysisToken(token, resultFilter);
 

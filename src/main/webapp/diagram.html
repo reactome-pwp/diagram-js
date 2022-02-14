@@ -75,7 +75,7 @@
         diagram.onDiagramLoaded(function (loaded) {
             console.info("Loaded ", loaded);
             diagram.flagItems("FYN");
-            diagram.selectItem("R-HSA-75892");
+            if (loaded === "R-HSA-109582") diagram.selectItem("R-HSA-75892");
         });
 
         diagram.onObjectHovered(function (hovered) {
@@ -85,6 +85,9 @@
         diagram.onObjectSelected(function (selected) {
             console.info("Selected ", selected);
         });
+        diagram.onSearchPerformed(function (searchArguments) {
+            console.info(searchArguments);
+        })
     }
         </pre>
 </div>
@@ -278,6 +281,26 @@
             </tr>
             <tr>
                 <td>
+                    <b>onSearchPerformed(function(searchArgs))</b> :: void
+                </td>
+                <td>
+                    Search arguments<br>
+                    <b>searchArgs</b>:
+                    &nbsp;{<br>
+                    &nbsp;&nbsp;&nbsp;'query' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'diagramStId' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'species' : string,<br>
+                    &nbsp;&nbsp;&nbsp;'terms' : Array&ltstring&gt,<br>
+                    &nbsp;&nbsp;&nbsp;'facets' : Array&ltstring&gt,<br>
+                    &nbsp;&nbsp;&nbsp;'facetsScope' : int<br>
+                    &nbsp;}<br>
+                </td>
+                <td>
+                    The function is called when user triggers a search
+                </td>
+            </tr>
+            <tr>
+                <td>
                     <b>onDiagramLoaded(function(stId))</b> :: void
                 </td>
                 <td>
@@ -358,6 +381,9 @@
         diagram.onObjectSelected(function (selected) {
             console.info("Selected ", selected);
         });
+        diagram.onSearchPerformed(function (searchArguments) {
+            console.info(searchArguments);
+        })
     }
 </script>
 </html>
