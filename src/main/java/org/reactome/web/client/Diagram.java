@@ -10,13 +10,18 @@ import org.reactome.web.analysis.client.filter.ResultFilter;
 import org.reactome.web.client.handlers.*;
 import org.reactome.web.client.model.DiagramObject;
 import org.reactome.web.client.model.JsProperties;
+import org.reactome.web.client.model.JsSearchArguments;
 import org.reactome.web.diagram.client.DiagramFactory;
 import org.reactome.web.diagram.client.DiagramViewer;
+import org.reactome.web.diagram.client.OptionalWidget;
 import org.reactome.web.diagram.data.graph.model.GraphObject;
 import org.reactome.web.pwp.model.client.content.ContentClient;
 import org.timepedia.exporter.client.Export;
 import org.timepedia.exporter.client.ExportPackage;
 import org.timepedia.exporter.client.Exportable;
+
+import java.util.Collections;
+import java.util.List;
 
 
 /**
@@ -60,26 +65,29 @@ public class Diagram implements Exportable {
                 jsProp.get("placeHolder"),
                 jsProp.get("proxyPrefix", SERVER),
                 jsProp.getInt("width", 500),
-                jsProp.getInt("height", 400)
+                jsProp.getInt("height", 400),
+                jsProp.getArray("toHide")
         );
     }
 
     public static Diagram create(String placeHolder, int width, int height) {
-        return create(placeHolder, SERVER, width, height);
+        return create(placeHolder, SERVER, width, height, Collections.emptyList());
     }
 
-    public static Diagram create(String placeHolder, String server, final int width, final int height) {
+    public static Diagram create(String placeHolder, String server, final int width, final int height, List<String> toHide) {
         final Element element = Document.get().getElementById(placeHolder);
         if (element == null)
             throw new RuntimeException("Reactome diagram cannot be initialised. Please provide a valid 'placeHolder' (\"" + placeHolder + "\" invalid place holder).");
 
         if (viewer == null) {
+            OptionalWidget.FIREWORKS.setVisible(false);
+            toHide.forEach((id) -> OptionalWidget.findById(id).setVisible(false));
+
             ContentClient.SERVER = server;
             AnalysisClient.SERVER = server;
             DiagramFactory.SERVER = server;
             DiagramFactory.WIDGET_JS = true; // DO NOT CHANGE TO FALSE.
             DiagramFactory.ILLUSTRATION_SERVER = SERVER;
-            DiagramFactory.SHOW_FIREWORKS_BTN = false;
             DiagramFactory.RESPOND_TO_SEARCH_SHORTCUT = false;
             DiagramFactory.SCROLL_SENSITIVITY = 500;
             diagram = DiagramFactory.createDiagramViewer();

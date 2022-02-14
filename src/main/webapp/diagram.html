@@ -64,7 +64,8 @@
         var diagram = Reactome.Diagram.create({
             "placeHolder" : "diagramHolder",
             "width" : 650,
-            "height" : 450
+            "height" : 450,
+            "toHide": []
         });
 
         //Initialising it to the "Hemostasis" pathway
@@ -112,10 +113,35 @@
                     &nbsp;&nbsp;&nbsp;'proxyPrefix' : string,<br>
                     &nbsp;&nbsp;&nbsp;'placeHolder' : string,<br>
                     &nbsp;&nbsp;&nbsp;'width' : int (optional),<br>
-                    &nbsp;&nbsp;&nbsp;'height' : int (optional)<br>
+                    &nbsp;&nbsp;&nbsp;'height' : int (optional),<br>
+                    &nbsp;&nbsp;&nbsp;'toHide' : string[] (optional)<br>
                     &nbsp;}
                 </td>
-                <td>Creates and returns a new Reactome.Diagram object</td>
+                <td>
+                    <p>
+                        Creates and returns a new Reactome.Diagram object
+                    </p>
+                    <p>
+                        toHide contain ids of inner functionalities that you don't want to use. <br>
+                        Available options:
+                    <ul>
+                        <li>search</li>
+                        <li>fit-all</li>
+                        <li>export</li>
+                        <li>legend</li>
+                        <li>collapsable-menu</li>
+                        <ul>
+                            <li>colour-profile</li>
+                            <li>interactors</li>
+                            <li>about</li>
+                        </ul>
+                        <li>bottom-pop-up</li>
+                        <li>thumbnail</li>
+
+                        <li>navigation</li>
+                    </ul>
+                    </p>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -358,7 +384,8 @@
         diagram = Reactome.Diagram.create({
             "placeHolder": "diagramHolder",
             "width": 650,
-            "height": 450
+            "height": 450,
+            "toHide": []
         });
 
         // If you want to test analysis, fetch a token from reactome.org and use them here
